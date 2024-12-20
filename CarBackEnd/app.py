@@ -1,6 +1,7 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from keras.models import load_model
+import uvicorn
 import numpy as np
 import json
 import os
@@ -20,18 +21,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-model_directory = "models/CarStyles"
-mapping_file = "mappings/CarStyle map.json"
+car_model_models_dir = "models/CarBrandsModels"
+car_model_map_dir = "mappings/Car Model Mappings"
 
-# Load the car style mappings
-with open(mapping_file, "r") as f:
+# Load the model prediction mappings
+with open("mappings/CarBrandMake map.json", "r") as f:
+    carMakeMap = json.load(f)
+with open("mappings/CarStyle map.json", "r") as f:
     carStyleMap = json.load(f)
 
-models = {}
-for model_file in os.listdir(model_directory):
-    if model_file.endswith(".h5"):
-        model_name = model_file.split(" ")[-1].split(".")[0]
-        models[model_name] = load_model(os.path.join(model_directory, model_file))
+car_make_model = load_model("models/CarBrandsMakes/CarBrandMakeModel 88.76% InceptionResNetV2.h5")
+car_style_model = load_model("models/CarStyles/CarStyle 96.63% InceptionResNetV2.h5")
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
@@ -50,26 +50,48 @@ async def predict(file: UploadFile = File(...)):
 
     results = {}
     try:
-        # Predict image on all models
-        for model_name, model in models.items():
-            yhat = model.predict(img_expanded)
-            predicted_class_idx = int(np.argmax(yhat))
-            predicted_class = carStyleMap[predicted_class_idx]
+        # Predict the make of the car
+        make_predictions = car_make_model.predict(img_expanded)
+        make_prediction = int(np.argmax(make_predictions))
+        make_prediction = carMakeMap[make_prediction]
 
-            probabilities = {
-                carStyleMap[idx]: f"{prob * 100:.2f}%" for idx, prob in enumerate(yhat[0])
-            }
+        # Find the CNN model corresponding to the make that was predicted previously
+        car_model_model = None
+        for model_file in os.listdir(car_model_models_dir):
+            if model_file.startswith(make_prediction):
+                car_model_model = load_model(os.path.join(car_model_models_dir, model_file))
+                for map_file in os.listdir(car_model_map_dir):
+                    if map_file.startswith(make_prediction):
+                        with open(os.path.join(car_model_map_dir, map_file), "r") as f:
+                            carModelMap = json.load(f)
+                        break
+                break
 
-            results[model_name] = {
-                "predicted_class": predicted_class,
-                "probabilities": probabilities
-            }
+        # Debugging
+        if not car_model_model:
+            raise HTTPException(status_code=400, detail=f"Error: Model of car not found")
+        
+        # Predict the model of the car
+        model_predictions = car_model_model.predict(img_expanded)
+        model_prediction = int(np.argmax(model_predictions))
+        model_prediction = carModelMap[model_prediction]
+ 
+        # Predict the style of the car
+        style_predictions = car_style_model.predict(img_expanded)
+        style_prediction = int(np.argmax(style_predictions))
+        style_prediction = carStyleMap[style_prediction]
+
+        results = {
+            "make": make_prediction,
+            "model": model_prediction,
+            "style": style_prediction
+        }
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail=f"Error while predicting. Message: {str(e)}")
-
     return results
 
-# Run the app with Uvicorn (typically done outside the script)
-# if __name__ == "__main__":
-#     import uvicorn
-#     uvicorn.run(app, host="0.0.0.0", port=8000, debug=True)
+# Run the app with Uvicorn (for development mode with reload)
+if __name__ == "__main__":
+    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
+
