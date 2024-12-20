@@ -1,8 +1,8 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import './App.css';
 
-function CarStylePredictor() {
+function CarClassyfier() {
     const [file, setFile] = useState(null);
     const [imageSrc, setImageSrc] = useState('');
     const [predictions, setPredictions] = useState({});
@@ -59,18 +59,13 @@ function CarStylePredictor() {
 
         try {
             setError('');
-            const response = await axios.post('http://127.0.0.1:5000/predict', formData, {
+            const response = await axios.post('http://127.0.0.1:8000/predict', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
 
-            if (response.data.error) {
-                setError(response.data.error);
-                setPredictions({});
-            } else {
-                setPredictions(response.data);
-            }
+            setPredictions(response.data);
         } catch (error) {
             setError('Error in prediction. Please try again.');
             console.error(error);
@@ -79,8 +74,7 @@ function CarStylePredictor() {
 
     return (
         <div className="container">
-            <h1 className="title">Car Style Predictor</h1>
-
+            <h1 className="title">Car Classyfier</h1>
             {/* Drag and Drop Area */}
             <div
                 className={`drop-zone ${dragging ? 'dragging' : ''}`}
@@ -103,27 +97,16 @@ function CarStylePredictor() {
                 </div>
             )}
 
-            {Object.keys(predictions).length > 0 && (
+            {predictions.make && predictions.model && predictions.style && (
                 <div className="results">
-                    <h2>Predictions from Models:</h2>
-                    {Object.entries(predictions).map(([modelName, result]) => (
-                        <div key={modelName} className="model-result">
-                            <h3>{modelName} Prediction</h3>
-                            <p>Predicted Class: {result.predicted_class}</p>
-                            <h4>Probabilities:</h4>
-                            <ul className="probabilities-list">
-                                {Object.entries(result.probabilities).map(([className, probability]) => (
-                                    <li key={className}>
-                                        {className}: {probability}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    ))}
+                    <h2>Prediction Results</h2>
+                    <p><strong>Make:</strong> {predictions.make}</p>
+                    <p><strong>Model:</strong> {predictions.model}</p>
+                    <p><strong>Style:</strong> {predictions.style}</p>
                 </div>
             )}
         </div>
     );
 }
 
-export default CarStylePredictor;
+export default CarClassyfier;
