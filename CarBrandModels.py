@@ -37,17 +37,9 @@ def build_model(base_model, num_classes):
 pretrained_models = {
     'MobileNet': MobileNet(weights='imagenet', include_top=False, input_shape=(224, 224, 3)),
     'MobileNetV3Large': MobileNetV3Large(weights='imagenet', include_top=False, input_shape=(224, 224, 3)),
-    # 'InceptionV3': InceptionV3(weights='imagenet', include_top=False, input_shape=(224, 224, 3)),
     'InceptionResNetV2': InceptionResNetV2(weights='imagenet', include_top=False, input_shape=(224, 224, 3)),
-    # 'ResNet50': ResNet50(weights='imagenet', include_top=False, input_shape=(224, 224, 3)),
-    # 'ResNet50V2': ResNet50V2(weights='imagenet', include_top=False, input_shape=(224, 224, 3)),
-    # 'DenseNet121': DenseNet121(weights='imagenet', include_top=False, input_shape=(224, 224, 3)),
-    # 'DenseNet169': DenseNet169(weights='imagenet', include_top=False, input_shape=(224, 224, 3)),
-    # 'DenseNet201': DenseNet201(weights='imagenet', include_top=False, input_shape=(224, 224, 3)),
     'EfficientNetV2B0': EfficientNetV2B0(weights='imagenet', include_top=False, input_shape=(224, 224, 3)),
     'EfficientNetV2B3': EfficientNetV2B3(weights='imagenet', include_top=False, input_shape=(224, 224, 3)),
-    # 'EfficientNetV2L': EfficientNetV2L(weights='imagenet', include_top=False, input_shape=(224, 224, 3)),
-    # 'EfficientNetV2S': EfficientNetV2S(weights='imagenet', include_top=False, input_shape=(224, 224, 3)),
 }
 
 gpus = tf.config.experimental.list_physical_devices('GPU')
@@ -89,9 +81,6 @@ for brand_name in os.listdir(base_dir):
     train = data.take(train_size)
     val = data.skip(train_size).take(val_size)
     test = data.skip(train_size + val_size).take(test_size)
-
-    best_accuracy = 75.00
-    best_model_name = "InceptionResNetV2"
 
     # Iterate through each pre-trained model
     for model_name, base_model in pretrained_models.items():
