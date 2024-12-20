@@ -9,10 +9,10 @@ Car Style Predictor is an application designed to predict the make, model, and s
 - Backend API developed using FastAPI with trained TensorFlow/Keras models.
 
 Project Structure
-```
+```python
 ├── CarBackEnd/
 │   ├── app.py                    # API call code for making prediction
-│   ├── mappings/                 # JSON mappings for car makes, models, and styles predictions (int -> name)
+│   ├── mappings/                 # JSON mappings for predictions (int -> name)
 │   ├── models/                   # Pre-trained car-related ML models
 │   └── requirements.txt          # Python library requirements for backend
 ├── CarFrontEnd/
