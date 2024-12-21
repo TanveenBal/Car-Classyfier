@@ -13,14 +13,16 @@ Car-Classyfier is an application designed to predict the make, model, and style 
 - Interactive and responsive UI built with React.
 - Backend API developed using FastAPI with trained TensorFlow/Keras models.
 
-<table align="center">
-  <tr>
-    <td><img src="src/Tacoma.gif" alt="Tacoma Prediction"></td>
-    <td><img src="src/Porche911.gif" alt="Porche Prediction"></td>
-    <td><img src="src/Civic.gif" alt="Civic Prediction"></td>
-  </tr>
-</table>
 
+<div style="text-align: center;">
+  <img src="src/Porche911.gif" alt="Car Classifier Animation">
+</div>
+<div style="text-align: center;">
+  <img src="src/Civic.gif" alt="Car Classifier Animation">
+</div>
+<div style="text-align: center;">
+  <img src="src/Tacoma.gif" alt="Car Classifier Animation">
+</div>
 
 Project Structure
 ```python
