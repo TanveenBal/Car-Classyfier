@@ -102,8 +102,6 @@ This model's performance exceeded expectations in both the make and style predic
 The best base model for predicting car models varied and included the following:
 
 ```
-MobileNet
-MobileNetV3Large
 InceptionResNetV2
 EfficientNetV2B0
 EfficientNetV2B3
