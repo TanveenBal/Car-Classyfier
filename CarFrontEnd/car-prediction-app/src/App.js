@@ -98,11 +98,17 @@ function CarClassyfier() {
             )}
 
             {predictions.make && predictions.model && predictions.style && (
-                <div className="results">
-                    <h2>Prediction Results</h2>
-                    <p><strong>Make:</strong> {predictions.make}</p>
-                    <p><strong>Model:</strong> {predictions.model}</p>
-                    <p><strong>Style:</strong> {predictions.style}</p>
+                <div className="results" style={{ textAlign: "center" }}>
+                    <h2 className="title" style={{ fontSize: "2em", marginBottom: "20px" }}>Prediction Results</h2>
+                    <p style={{ fontSize: "1.5em", fontWeight: "normal" }}>
+                        <strong>Make:</strong> {predictions.make}
+                    </p>
+                    <p style={{ fontSize: "1.5em", fontWeight: "normal" }}>
+                        <strong>Model:</strong> {predictions.model}
+                    </p>
+                    <p style={{ fontSize: "1.5em", fontWeight: "normal" }}>
+                        <strong>Style:</strong> {predictions.style}
+                    </p>
                 </div>
             )}
         </div>
